@@ -266,9 +266,7 @@ CMakeFiles/Game.dir/src/main.cpp.o: ../src/main.cpp \
   /usr/include/c++/11/bits/ostream.tcc \
   /usr/include/c++/11/istream \
   /usr/include/c++/11/bits/istream.tcc \
-  ../src/programs/iron-dome/iron-dome.h \
-  ../src/main.h \
-  ../include/raylib.h
+  ../src/iron-dome.h
 
 
 /usr/include/c++/11/bits/istream.tcc:
@@ -542,8 +540,6 @@ CMakeFiles/Game.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h:
 
 /usr/include/x86_64-linux-gnu/bits/floatn.h:
-
-../src/programs/iron-dome/iron-dome.h:
 
 /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
 

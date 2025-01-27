@@ -1,3 +1,5 @@
 *.o
-game
-.vscode
+.vscode 
+build/Game
+build/cmake_install.cmake_installCmakeCache.txt
+

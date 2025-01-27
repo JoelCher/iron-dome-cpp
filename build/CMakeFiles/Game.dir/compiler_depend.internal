@@ -268,7 +268,5 @@ CMakeFiles/Game.dir/src/main.cpp.o
  /usr/include/c++/11/bits/ostream.tcc
  /usr/include/c++/11/istream
  /usr/include/c++/11/bits/istream.tcc
- /home/joel/projects/cpp-raylib/src/programs/iron-dome/iron-dome.h
- /home/joel/projects/cpp-raylib/src/main.h
- /home/joel/projects/cpp-raylib/include/raylib.h
+ /home/joel/projects/cpp-raylib/src/iron-dome.h
 

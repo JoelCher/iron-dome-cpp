@@ -1,1 +1,1 @@
-/usr/bin/c++  -Wall  -std=c++14 CMakeFiles/Game.dir/src/iron-dome.cpp.o CMakeFiles/Game.dir/src/main.cpp.o -o Game  ../lib/libraylib.a -lGL -lX11 -lm 
+/usr/bin/c++  -Wall -std=c++14 CMakeFiles/Game.dir/src/iron-dome.cpp.o CMakeFiles/Game.dir/src/main.cpp.o -o Game  ../lib/libraylib.a -lGL -lX11 -lm 
