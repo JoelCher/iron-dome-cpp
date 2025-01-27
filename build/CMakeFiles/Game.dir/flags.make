@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/joel/projects/cpp-raylib/include
 
-CXX_FLAGS =  -Wall -Werror -std=c++14 -std=gnu++11
+CXX_FLAGS =  -Wall  -std=c++14 -std=gnu++11
 

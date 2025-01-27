@@ -129,6 +129,30 @@ Game/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/build
 .PHONY : Game/fast
 
+src/iron-dome.o: src/iron-dome.cpp.o
+.PHONY : src/iron-dome.o
+
+# target to build an object file
+src/iron-dome.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/iron-dome.cpp.o
+.PHONY : src/iron-dome.cpp.o
+
+src/iron-dome.i: src/iron-dome.cpp.i
+.PHONY : src/iron-dome.i
+
+# target to preprocess a source file
+src/iron-dome.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/iron-dome.cpp.i
+.PHONY : src/iron-dome.cpp.i
+
+src/iron-dome.s: src/iron-dome.cpp.s
+.PHONY : src/iron-dome.s
+
+# target to generate assembly for a file
+src/iron-dome.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/iron-dome.cpp.s
+.PHONY : src/iron-dome.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -162,6 +186,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... Game"
+	@echo "... src/iron-dome.o"
+	@echo "... src/iron-dome.i"
+	@echo "... src/iron-dome.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
