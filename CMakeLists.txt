@@ -14,10 +14,19 @@ include_directories(include)
 
 set(source_dir "${PROJECT_SOURCE_DIR}/src/")
 # Source files
-file (GLOB source_files "${source_dir}/*.cpp")
+
+file(GLOB root_source_files "${source_dir}/*.cpp")
+
+# Find .cpp files in subdirectories (recursively)
+file(GLOB_RECURSE subdir_source_files "${source_dir}/*/*.cpp")
+
+# Combine the two lists
+set(source_files ${root_source_files} ${subdir_source_files})
+message(STATUS "Source files: ${source_files}")
 
 # Add executable
 add_executable(${PROJECT_NAME} ${source_files})
+
 
 # Link libraries
 find_library(RAYLIB_LIBRARY NAMES raylib PATHS lib)

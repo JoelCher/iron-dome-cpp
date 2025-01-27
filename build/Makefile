@@ -177,6 +177,30 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/rocket/rocket.o: src/rocket/rocket.cpp.o
+.PHONY : src/rocket/rocket.o
+
+# target to build an object file
+src/rocket/rocket.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/rocket/rocket.cpp.o
+.PHONY : src/rocket/rocket.cpp.o
+
+src/rocket/rocket.i: src/rocket/rocket.cpp.i
+.PHONY : src/rocket/rocket.i
+
+# target to preprocess a source file
+src/rocket/rocket.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/rocket/rocket.cpp.i
+.PHONY : src/rocket/rocket.cpp.i
+
+src/rocket/rocket.s: src/rocket/rocket.cpp.s
+.PHONY : src/rocket/rocket.s
+
+# target to generate assembly for a file
+src/rocket/rocket.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/rocket/rocket.cpp.s
+.PHONY : src/rocket/rocket.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -192,6 +216,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/rocket/rocket.o"
+	@echo "... src/rocket/rocket.i"
+	@echo "... src/rocket/rocket.s"
 .PHONY : help
 
 

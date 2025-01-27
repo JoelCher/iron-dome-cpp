@@ -1,5 +1,7 @@
+#ifndef _IRON_DOME_H
+#define _IRON_DOME_H
 #include "main.h"
-
+#include "rocket/rocket.h"
 int iron_dome_program(void);
 #define GRID_SIZE 100
 #define MAX_ENEMY_ROCKET_NUM 100
@@ -22,20 +24,20 @@ typedef struct {
     Color color;
     bool is_placed;
 } Building;
-typedef struct {
-    Vector3 pos;
-    Vector3 velocity;
-    bool is_destroyed;
-    int length;
-} EnemyRocket;
-typedef struct {
-    Vector3 pos;
-    int rocket_target;
-    int status;
-    Vector3 velocity;
-    int length;
-    int iron_dome_id;
-} DefenderRocket;
+// typedef struct {
+//     Vector3 pos;
+//     Vector3 velocity;
+//     bool is_destroyed;
+//     int length;
+// } EnemyRocket;
+// typedef struct {
+//     Vector3 pos;
+//     int rocket_target;
+//     int status;
+//     Vector3 velocity;
+//     int length;
+//     int iron_dome_id;
+// } DefenderRocket;
 
 void update_positions(EnemyRocket enemy_rocket[MAX_ENEMY_ROCKET_NUM],
                       DefenderRocket defender_rocket[DEFENDER_ROCKET_NUM]);
@@ -50,3 +52,4 @@ void handle_camera(Camera *camera);
 void add_enemy_rocket();
 
 void add_building();
+#endif

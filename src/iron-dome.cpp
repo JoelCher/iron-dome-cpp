@@ -1,4 +1,5 @@
 #include "./iron-dome.h"
+#include "rocket/rocket.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -281,22 +282,7 @@ void update_positions(EnemyRocket enemy_rockets[MAX_ENEMY_ROCKET_NUM],
                       DefenderRocket defender_rockets[DEFENDER_ROCKET_NUM]) {
     int animFrames = 0;
     for (int i = 0; i < enemy_rockets_count; i++) {
-        if (enemy_rockets[i].is_destroyed)
-            continue;
-        enemy_rockets[i].velocity.y =
-            enemy_rockets[i].velocity.y + (1 / 60.0) * -1 * 9.8;
-        double new_enemy_pos_y =
-            enemy_rockets[i].pos.y + (enemy_rockets[i].velocity.y / 60.0);
-        // stop if hitting the ground
-        if (new_enemy_pos_y <= 1.0 / 2) {
-            enemy_rockets[i].velocity.y = (enemy_rockets[i].velocity.y = 0);
-        } else {
-            enemy_rockets[i].pos.x =
-                enemy_rockets[i].pos.x + (enemy_rockets[i].velocity.x / 60.0);
-            enemy_rockets[i].pos.y = new_enemy_pos_y;
-            enemy_rockets[i].pos.z =
-                enemy_rockets[i].pos.z + (enemy_rockets[i].velocity.z / 60.0);
-        }
+        enemy_rockets[i].update_position();
     }
     // Calc next speed based on position of enemy rocket
 
@@ -369,15 +355,15 @@ void reset_game() {
 
 void add_enemy_rocket() {
     enemy_rockets_count++;
-    EnemyRocket *new_rocket = &enemy_rockets[enemy_rockets_count - 1];
-    new_rocket->pos.x = -WORLD_WIDTH / 2 + 50;
-    new_rocket->pos.y = 100;
-    new_rocket->pos.z = (rand() % 501) - 250;
-    new_rocket->velocity.x = 30;
-    new_rocket->velocity.y = 5;
-    int random_z_speed = (rand() % 100) - 50;
-    new_rocket->velocity.z = random_z_speed;
-    new_rocket->length = 2;
+    // EnemyRocket *new_rocket = &enemy_rockets[enemy_rockets_count - 1];
+    // new_rocket->pos.x = -WORLD_WIDTH / 2 + 50;
+    // new_rocket->pos.y = 100;
+    // new_rocket->pos.z = (rand() % 501) - 250;
+    // new_rocket->velocity.x = 30;
+    // new_rocket->velocity.y = 5;
+    // int random_z_speed = (rand() % 100) - 50;
+    // new_rocket->velocity.z = random_z_speed;
+    // new_rocket->length = 2;
 }
 
 void handle_camera(Camera *camera) {

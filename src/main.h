@@ -1,5 +1,3 @@
-#define SCREEN_WIDTH 1200
-#define SCREEN_HEIGHT 800
 #include "../include/raylib.h"
 
 #define VECTOR_ADDITION_PROGRAM 1

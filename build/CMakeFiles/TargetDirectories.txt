@@ -1,3 +1,0 @@
-/home/joel/projects/cpp-raylib/build/CMakeFiles/Game.dir
-/home/joel/projects/cpp-raylib/build/CMakeFiles/edit_cache.dir
-/home/joel/projects/cpp-raylib/build/CMakeFiles/rebuild_cache.dir
