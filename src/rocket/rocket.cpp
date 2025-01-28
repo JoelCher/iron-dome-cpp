@@ -2,20 +2,6 @@
 #include "../iron-dome.h"
 #include <random>
 
-// void add_enemy_rocket() {
-//     enemy_rockets_count++;
-//     EnemyRocket *new_rocket = &enemy_rockets[enemy_rockets_count - 1];
-//     new_rocket->pos.x = -WORLD_WIDTH / 2 + 50;
-//     new_rocket->pos.y = 100;
-//     new_rocket->pos.z = (rand() % 501) - 250;
-//     new_rocket->velocity.x = 30;
-//     new_rocket->velocity.y = 5;
-//     int random_z_speed = (rand() % 100) - 50;
-//     new_rocket->velocity.z = random_z_speed;
-//     new_rocket->length = 2;
-//
-// }
-//
 EnemyRocket::EnemyRocket() {
     pos.x = -WORLD_WIDTH / 2 + 50;
     pos.y = 100;

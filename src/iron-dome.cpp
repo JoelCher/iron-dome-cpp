@@ -3,41 +3,42 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
 
 #define RAYGUI_IMPLEMENTATION
 #include "../include/raygui.h"
+using namespace std;
 
-DefenderRocket defender_rockets[DEFENDER_ROCKET_NUM];
-EnemyRocket enemy_rockets[MAX_ENEMY_ROCKET_NUM];
-Capsule iron_domes[10] = {{{40, 0, -200}, 50, true},
-                          {{40, 0, 200}, 50, true},
-                          {{40, 0, 0}, 50, true}};
-// Tracking the count of the rockets
-int enemy_rockets_count = 0;
+vector<DefenderRocket> defender_rockets;
+vector<EnemyRocket> enemy_rockets;
+
+vector<Capsule> iron_domes = {
+    {{40, 0, -200}, 50}, {{40, 0, 200}, 50}, {{40, 0, 0}, 50}};
 Building new_building = {{-100, 50.0 / 2, 30}, {3, 50, 5}, WHITE};
 bool is_adding_building = false;
-Building buildings[200] = {{{20, 10.0 / 2, 0}, {2, 10, 3}, WHITE, true},
-                           {{25, 15.0 / 2, 5}, {1.5, 15, 3}, WHITE, true},
-                           {{44, 20.0 / 2, 10}, {2, 20, 5}, WHITE, true},
-                           {{30, 10.0 / 2, 20}, {1.5, 10, 3}, WHITE, true},
-                           {{100, 50.0 / 2, 30}, {3, 50, 5}, WHITE, true},
-
-                           {{-10, 1 / 2, -5}, {1, 1, 1}, WHITE, true}};
+vector<Building> buildings = {{{20, 10.0 / 2, 0}, {2, 10, 3}, WHITE},
+                              {{25, 15.0 / 2, 5}, {1.5, 15, 3}, WHITE},
+                              {{44, 20.0 / 2, 10}, {2, 20, 5}, WHITE},
+                              {{30, 10.0 / 2, 20}, {1.5, 10, 3}, WHITE},
+                              {{100, 50.0 / 2, 30}, {3, 50, 5}, WHITE},
+                              {{-10, 1.0 / 2, -5}, {1, 1, 1}, WHITE}};
 
 int iron_dome_program(void) {
     // Initializing the defender rockets
-    for (int i = 0; i < DEFENDER_ROCKET_NUM &&
-                    iron_domes[i / ROCKET_PER_CAPSULE].is_placed;
+    for (int i = 0;
+         i < DEFENDER_ROCKET_NUM && i < ROCKET_PER_CAPSULE * iron_domes.size();
          i++) {
         // Setting at -1 means they have not been launched yet
-        defender_rockets[i].rocket_target = -1;
+        DefenderRocket new_rocket;
+        new_rocket.rocket_target = -1;
         // Each iron dome capsule receives 50 rockets
         int iron_dome_id = i / ROCKET_PER_CAPSULE;
-        defender_rockets[i].iron_dome_id = iron_dome_id;
-        defender_rockets[i].pos.x = iron_domes[iron_dome_id].pos.x;
-        defender_rockets[i].pos.y = 1.0 / 2;
-        defender_rockets[i].pos.z = iron_domes[iron_dome_id].pos.z;
-        defender_rockets[i].length = 2;
+        new_rocket.iron_dome_id = iron_dome_id;
+        new_rocket.pos.x = iron_domes[iron_dome_id].pos.x;
+        new_rocket.pos.y = 1.0 / 2;
+        new_rocket.pos.z = iron_domes[iron_dome_id].pos.z;
+        new_rocket.length = 2;
+        defender_rockets.push_back(new_rocket);
     }
 
     // Define the camera to look into our 3d world
@@ -62,8 +63,8 @@ int iron_dome_program(void) {
 
         // Assigning targets to defender rockets
         // We need to check if there are any enemy rockets
-        if (enemy_rockets_count) {
-            for (int i = 0; i < enemy_rockets_count; i++) {
+        if (enemy_rockets.size()) {
+            for (int i = 0; i < enemy_rockets.size(); i++) {
                 // Check if there is already a defender rocket assigned to this
                 // rocket
                 bool is_already_assigned = false;
@@ -77,12 +78,8 @@ int iron_dome_program(void) {
                     EnemyRocket curr_enemy_rocket = enemy_rockets[i];
                     int closest_capsule = 0;
                     double closest_distance = -1;
-                    for (int z = 0;
-                         z < sizeof(iron_domes) / sizeof(iron_domes[0]); z++) {
+                    for (int z = 0; z < iron_domes.size(); z++) {
                         Capsule curr_capsule = iron_domes[z];
-                        if (!curr_capsule.remaining_rockets ||
-                            !curr_capsule.is_placed)
-                            continue;
                         double x_diff =
                             curr_enemy_rocket.pos.x - curr_capsule.pos.x;
                         double y_diff =
@@ -115,8 +112,8 @@ int iron_dome_program(void) {
             }
         }
 
-        check_rockets_collision(enemy_rockets, defender_rockets);
-        update_positions(enemy_rockets, defender_rockets);
+        check_rockets_collision();
+        update_positions();
 
         BeginDrawing();
 
@@ -128,13 +125,11 @@ int iron_dome_program(void) {
         DrawPlane((Vector3){0, 0, 0}, (Vector2){WORLD_WIDTH, WORLD_LENGTH},
                   LIGHTGRAY);
         // Drawing the iron dome capsules
-        for (int i = 0; i < sizeof(iron_domes) / sizeof(iron_domes[0]); i++) {
-            if (!iron_domes[i].is_placed)
-                continue;
+        for (int i = 0; i < iron_domes.size(); i++) {
             DrawSphere(iron_domes[i].pos, 5, BLUE);
         }
         // Drawing the enemy rocket
-        for (int i = 0; i < enemy_rockets_count; i++) {
+        for (int i = 0; i < enemy_rockets.size(); i++) {
             if (enemy_rockets[i].is_destroyed)
                 continue;
             // DrawCubeV(enemy_rockets[i].pos, enemy_rockets[i].size, RED);
@@ -147,7 +142,7 @@ int iron_dome_program(void) {
                                 curr_velocity.z * curr_velocity.z);
             // The size of the rocket is 2, so I need to find the number to
             // divide bla bla bla(I dont know how to explain, im stupid)
-            double d = speed / enemy_rockets[i].length;
+            float d = speed / enemy_rockets[i].length;
             DrawCapsule(curr_pos,
                         (Vector3){curr_pos.x - curr_velocity.x / d,
                                   curr_pos.y - curr_velocity.y / d,
@@ -160,7 +155,7 @@ int iron_dome_program(void) {
                              1.2f, 8, 8, PURPLE);
         }
 
-        for (int i = 0; i < DEFENDER_ROCKET_NUM; i++) {
+        for (int i = 0; i < defender_rockets.size(); i++) {
             if (defender_rockets[i].rocket_target != -1 &&
                 defender_rockets[i].status == FLYING) {
                 Vector3 curr_pos = defender_rockets[i].pos;
@@ -168,7 +163,7 @@ int iron_dome_program(void) {
                 double speed = sqrt(curr_velocity.x * curr_velocity.x +
                                     curr_velocity.y * curr_velocity.y +
                                     curr_velocity.z * curr_velocity.z);
-                double d = speed / defender_rockets[i].length;
+                float d = speed / defender_rockets[i].length;
                 DrawCapsule(curr_pos,
                             (Vector3){curr_pos.x - curr_velocity.x / d,
                                       curr_pos.y - curr_velocity.y / d,
@@ -185,19 +180,15 @@ int iron_dome_program(void) {
         if (is_adding_building) {
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                 // Place the building
-                for (int i = 0; i < 200; i++) {
-                    if (!buildings[i].is_placed) {
-                        buildings[i].pos.x = new_building.pos.x;
-                        buildings[i].pos.y = new_building.pos.y;
-                        buildings[i].pos.z = new_building.pos.z;
-                        buildings[i].size.x = new_building.size.x;
-                        buildings[i].size.y = new_building.size.y;
-                        buildings[i].size.z = new_building.size.z;
-                        buildings[i].color = new_building.color;
-                        buildings[i].is_placed = true;
-                        break;
-                    }
-                }
+                Building building_to_add;
+                building_to_add.pos.x = new_building.pos.x;
+                building_to_add.pos.y = new_building.pos.y;
+                building_to_add.pos.z = new_building.pos.z;
+                building_to_add.size.x = new_building.size.x;
+                building_to_add.size.y = new_building.size.y;
+                building_to_add.size.z = new_building.size.z;
+                building_to_add.color = new_building.color;
+                buildings.push_back(building_to_add);
                 is_adding_building = false;
                 ShowCursor();
             } else {
@@ -215,7 +206,7 @@ int iron_dome_program(void) {
             }
         }
         // Just drawing a bunch of buildings
-        for (int i = 0; i < sizeof(buildings) / sizeof(buildings[0]); i++) {
+        for (int i = 0; i < buildings.size(); i++) {
             DrawCubeV(buildings[i].pos, buildings[i].size, buildings[i].color);
         }
 
@@ -252,15 +243,12 @@ int iron_dome_program(void) {
     return 0;
 }
 
-void check_rockets_collision(
-    EnemyRocket enemy_rockets[MAX_ENEMY_ROCKET_NUM],
-    DefenderRocket defender_rocket[DEFENDER_ROCKET_NUM]) {
-
+void check_rockets_collision() {
     for (int i = 0; i < DEFENDER_ROCKET_NUM; i++) {
         // Dont check for destroyed rockets
         if (defender_rockets[i].status != FLYING)
             continue;
-        for (int j = 0; j < enemy_rockets_count; j++) {
+        for (int j = 0; j < enemy_rockets.size(); j++) {
             if (enemy_rockets[j].is_destroyed)
                 continue;
             double z_diff = enemy_rockets[j].pos.z - defender_rockets[i].pos.z;
@@ -278,10 +266,9 @@ void check_rockets_collision(
     }
 }
 
-void update_positions(EnemyRocket enemy_rockets[MAX_ENEMY_ROCKET_NUM],
-                      DefenderRocket defender_rockets[DEFENDER_ROCKET_NUM]) {
+void update_positions() {
     int animFrames = 0;
-    for (int i = 0; i < enemy_rockets_count; i++) {
+    for (int i = 0; i < enemy_rockets.size(); i++) {
         enemy_rockets[i].update_position();
     }
     // Calc next speed based on position of enemy rocket
@@ -340,30 +327,29 @@ void draw_text_box(char *text, int x, int y, int width, int height, Color color,
 }
 
 void reset_game() {
-    for (int i = 0; i < DEFENDER_ROCKET_NUM; i++) {
-        defender_rockets[i].pos.x = 0;
-        defender_rockets[i].pos.y = 1.0 / 2;
-        defender_rockets[i].pos.z = 50;
-        defender_rockets[i].rocket_target = -1;
-        defender_rockets[i].status = 0;
+    enemy_rockets.clear();
+    defender_rockets.clear();
+    buildings.clear();
+    for (int i = 0;
+         i < DEFENDER_ROCKET_NUM && i < ROCKET_PER_CAPSULE * iron_domes.size();
+         i++) {
+        // Setting at -1 means they have not been launched yet
+        DefenderRocket new_rocket;
+        new_rocket.rocket_target = -1;
+        // Each iron dome capsule receives 50 rockets
+        int iron_dome_id = i / ROCKET_PER_CAPSULE;
+        new_rocket.iron_dome_id = iron_dome_id;
+        new_rocket.pos.x = iron_domes[iron_dome_id].pos.x;
+        new_rocket.pos.y = 1.0 / 2;
+        new_rocket.pos.z = iron_domes[iron_dome_id].pos.z;
+        new_rocket.length = 2;
+        defender_rockets.push_back(new_rocket);
     }
-    for (int i = 0; i < enemy_rockets_count; i++) {
-        enemy_rockets[i].is_destroyed = false;
-    }
-    enemy_rockets_count = 0;
 }
 
 void add_enemy_rocket() {
-    enemy_rockets_count++;
-    // EnemyRocket *new_rocket = &enemy_rockets[enemy_rockets_count - 1];
-    // new_rocket->pos.x = -WORLD_WIDTH / 2 + 50;
-    // new_rocket->pos.y = 100;
-    // new_rocket->pos.z = (rand() % 501) - 250;
-    // new_rocket->velocity.x = 30;
-    // new_rocket->velocity.y = 5;
-    // int random_z_speed = (rand() % 100) - 50;
-    // new_rocket->velocity.z = random_z_speed;
-    // new_rocket->length = 2;
+    EnemyRocket new_rocket;
+    enemy_rockets.push_back(new_rocket);
 }
 
 void handle_camera(Camera *camera) {
@@ -425,7 +411,4 @@ void handle_camera(Camera *camera) {
     }
 }
 
-void add_building() {
-    is_adding_building = true;
-    // HideCursor();
-}
+void add_building() { is_adding_building = true; }
