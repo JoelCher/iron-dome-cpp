@@ -20,14 +20,16 @@ vector<Capsule> iron_domes = {
     {{40, 0, -200}, 50}, {{40, 0, 200}, 50}, {{40, 0, 0}, 50}};
 Building new_building = {{-100, 50.0 / 2, 30}, {3, 50, 5}, WHITE};
 bool is_adding_building = false;
-vector<Building> buildings = {{{20, 10.0 / 2, 0}, {2, 10, 3}, WHITE},
-                              {{25, 15.0 / 2, 5}, {1.5, 15, 3}, WHITE},
-                              {{44, 20.0 / 2, 10}, {2, 20, 5}, WHITE},
-                              {{30, 10.0 / 2, 20}, {1.5, 10, 3}, WHITE},
-                              {{100, 50.0 / 2, 30}, {3, 50, 5}, WHITE},
-                              {{-10, 1.0 / 2, -5}, {1, 1, 1}, WHITE}};
-
+vector<Building> buildings;
 int iron_dome_program(void) {
+    Model model =
+        LoadModel("../resources/14077_WWII_Tank_Germany_Panzer_III_v1_L2.obj");
+    // Texture2D texture = LoadTexture(
+    //     "../resources/"
+    //     "14077_WWII_Tank_Germany_Panzer_III_turret_diff.png"); // Load
+    //                                                            // model
+    // // texture
+    // model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     // Loading json data about buildings
     std::ifstream loadFile("buildings.json");
     if (loadFile.is_open()) {
@@ -78,15 +80,17 @@ int iron_dome_program(void) {
     // ChangeDirectory(GetApplicationDirectory());
     Camera camera = {0};
     camera.position =
-        (Vector3){0.0f, 100.0f, WORLD_LENGTH / 2.0 + 40}; // Camera position
-    camera.target = (Vector3){0.0f, 0.0f, 0.0f}; // Camera looking at point
+        (Vector3){0.0f, 250.0f, WORLD_LENGTH / 2.0 + 40}; // Camera position
+    camera.target = (Vector3){
+        0.0f, 0.0f, WORLD_LENGTH / 2.0 - 200}; // Camera looking at point
     camera.up = (Vector3){0.0f, 1.0f,
                           0.0f}; // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;         // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE; // Camera projection type
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
-
+    // Texture2D background =
+    //     LoadTexture("../resources/Remove background project.png");
     // BoundingBox rocket_bounds = GetMeshBoundingBox(rocket_model.meshes[0]);
     // Main game loop
     double start_of_game = GetTime();
@@ -132,8 +136,6 @@ int iron_dome_program(void) {
                         if (defender_rockets[j].iron_dome_id ==
                                 closest_capsule &&
                             defender_rockets[j].rocket_target == -1) {
-                            printf("The closest capsule is %d\n",
-                                   closest_capsule);
                             defender_rockets[j].rocket_target = i;
                             defender_rockets[j].status = FLYING;
                             iron_domes[defender_rockets[j].iron_dome_id]
@@ -151,9 +153,12 @@ int iron_dome_program(void) {
         BeginDrawing();
 
         ClearBackground(BLACK);
+        // DrawTexture(background, 0, 0, WHITE); // Draw the image at (0, 0)
 
         BeginMode3D(camera);
 
+        DrawModelEx(model, (Vector3){-20, 0, 0}, (Vector3){1, 0, 0}, 270,
+                    (Vector3){10, 10, 10}, BLACK);
         // Drawing a floor
         DrawPlane((Vector3){0, 0, 0}, (Vector2){WORLD_WIDTH, WORLD_LENGTH},
                   LIGHTGRAY);
@@ -285,7 +290,8 @@ int iron_dome_program(void) {
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    // UnloadModel(rocket_model); // Unload model
+    UnloadModel(model); // Unload model
+    // UnloadTexture(texture);
     CloseWindow(); // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 
@@ -392,62 +398,43 @@ void add_enemy_rocket() {
 }
 
 void handle_camera(Camera *camera) {
-    // if (IsCursorHidden())
 
     float mouseWheelMovement = GetMouseWheelMove();
     float t = 4.0f;
 
     if (IsKeyDown(KEY_UP)) {
-        camera->position.y += t;
-    }
-    if (IsKeyDown(KEY_DOWN)) {
-        camera->position.y -= t;
-    }
-
-    // Calculate movement vector
-    float tx = camera->position.z;
-    float tz = camera->position.x;
-    float length = sqrt(tx * tx + tz * tz);
-    tx = (tx / length) * t;
-    tz = (tz / length) * t;
-
-    if (IsKeyDown(KEY_RIGHT)) {
-        camera->position.x += tx;
-        camera->position.z -= tz;
-    }
-    if (IsKeyDown(KEY_LEFT)) {
-        camera->position.x -= tx;
-        camera->position.z += tz;
-    }
-
-    // Zoom in/out
-    if (mouseWheelMovement != 0) {
-        float rx = camera->position.x;
-        float rz = camera->position.z;
-        float ry = camera->position.y;
-
-        length = sqrt(rx * rx + ry * ry + rz * rz);
-
-        rx = (rx / length) * t;
-        rz = (rz / length) * t;
-        ry = (ry / length) * t;
-
-        if (mouseWheelMovement < 0) {
-            camera->position.x += rx;
-            camera->position.z += rz;
-            camera->position.y += ry;
-        } else {
-            camera->position.x -= rx;
-            camera->position.z -= rz;
-            camera->position.y -= ry;
+        if (!(camera->position.z - t < 200)) {
+            camera->position.z -= t;
+            camera->target.z -= t;
         }
     }
-    // Toggle camera controls
-    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
-        UpdateCamera(camera, CAMERA_FIRST_PERSON);
-    } else {
-        UpdateCamera(camera, CAMERA_PERSPECTIVE);
+    if (IsKeyDown(KEY_DOWN)) {
+        if (!(camera->position.z + t > WORLD_LENGTH / 2 + 100)) {
+            camera->position.z += t;
+            camera->target.z += t;
+        }
     }
+    if (IsKeyDown(KEY_RIGHT)) {
+        camera->position.x += t;
+        camera->target.x += t;
+    }
+    if (IsKeyDown(KEY_LEFT)) {
+        camera->position.x -= t;
+        camera->target.x -= t;
+    }
+
+    // Zoom in/out - this is for now cancelled, until I figure this shit out
+    // if (mouseWheelMovement != 0) {
+    //     if (mouseWheelMovement < 0) {
+    //         camera->position.y += 10;
+    //     } else {
+    //         camera->position.y -= 10;
+    //     }
+    // }
 }
 
 void add_building() { is_adding_building = true; }
+
+void handle_mouse() {
+    // I am trying to implement a mouse surround
+}

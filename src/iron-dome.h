@@ -1,5 +1,4 @@
-#ifndef _IRON_DOME_H
-#define _IRON_DOME_H
+#pragma once
 #include "main.h"
 #include "rocket/rocket.h"
 int iron_dome_program(void);
@@ -10,7 +9,7 @@ int iron_dome_program(void);
 #define HIT_SUCCESS 30
 #define HIT_MISS 20
 #define FLYING 10
-#define WORLD_WIDTH 700
+#define WORLD_WIDTH 1000
 #define WORLD_LENGTH 700
 
 typedef struct {
@@ -31,4 +30,4 @@ void handle_camera(Camera *camera);
 void add_enemy_rocket();
 
 void add_building();
-#endif
+void handle_mouse();
