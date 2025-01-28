@@ -26,8 +26,6 @@ typedef struct {
 
 void update_positions();
 void check_rockets_collision();
-void draw_text_box(char *text, int x, int y, int width, int height, Color color,
-                   void (*on_click)());
 void reset_game();
 void handle_camera(Camera *camera);
 void add_enemy_rocket();

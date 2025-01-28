@@ -1,11 +1,11 @@
- #include "../include/raylib.h"
- #include "main.h"
- #include <iostream>
- #include "iron-dome.h"
- int main() {
+#include "main.h"
+#include "../include/raylib.h"
+#include "iron-dome.h"
+#include <iostream>
+int main() {
     init_window();
     iron_dome_program();
-    
+
     return 0;
 }
 

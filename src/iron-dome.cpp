@@ -1,10 +1,14 @@
 #include "./iron-dome.h"
+#include "../include/json.hpp"
 #include "rocket/rocket.h"
+#include <fstream>
+#include <iostream>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 #include <vector>
-
+using json = nlohmann::json;
 #define RAYGUI_IMPLEMENTATION
 #include "../include/raygui.h"
 using namespace std;
@@ -24,6 +28,35 @@ vector<Building> buildings = {{{20, 10.0 / 2, 0}, {2, 10, 3}, WHITE},
                               {{-10, 1.0 / 2, -5}, {1, 1, 1}, WHITE}};
 
 int iron_dome_program(void) {
+    // Loading json data about buildings
+    std::ifstream loadFile("buildings.json");
+    if (loadFile.is_open()) {
+        json loadedData;
+        loadFile >> loadedData; // Load JSON from file
+        loadFile.close();
+        for (int i = 0; i < loadedData.size(); i++) {
+            Building building;
+            int x = loadedData[i]["position"]["x"];
+            int y = loadedData[i]["position"]["y"];
+            int z = loadedData[i]["position"]["z"];
+            int size_x = loadedData[i]["size"]["x"];
+            int size_y = loadedData[i]["size"]["y"];
+            int size_z = loadedData[i]["size"]["z"];
+            building.pos.x = x;
+            building.pos.y = y;
+            building.pos.z = z;
+            building.color = WHITE;
+            building.size.x = size_x;
+            building.size.y = size_y;
+            building.size.z = size_z;
+            buildings.push_back(building);
+        }
+        // Access nested data
+
+        // Print data
+    } else {
+        cerr << "Failed to open the file for reading." << std::endl;
+    }
     // Initializing the defender rockets
     for (int i = 0;
          i < DEFENDER_ROCKET_NUM && i < ROCKET_PER_CAPSULE * iron_domes.size();
@@ -191,6 +224,22 @@ int iron_dome_program(void) {
                 buildings.push_back(building_to_add);
                 is_adding_building = false;
                 ShowCursor();
+
+                // Add the building to the json database
+                std::ifstream input_file("buildings.json");
+                json json_array = json::array();
+                input_file >> json_array;
+                json j_object;
+                j_object["position"] = {{"x", building_to_add.pos.x},
+                                        {"y", building_to_add.pos.y},
+                                        {"z", building_to_add.pos.z}};
+                j_object["size"] = {{"x", building_to_add.size.x},
+                                    {"y", building_to_add.size.y},
+                                    {"z", building_to_add.size.z}};
+                json_array.push_back(j_object);
+                std::ofstream file("buildings.json");
+                file << json_array.dump(4); // Pretty-print with 4 spaces
+                file.close();
             } else {
                 // Draw a building following the mouse
                 Vector2 mouse_pos = GetMousePosition();
@@ -309,27 +358,17 @@ void update_positions() {
     }
 }
 
-/**
- * Function that draws a 2d box on the screen and also a text in it
- */
-void draw_text_box(char *text, int x, int y, int width, int height, Color color,
-                   void (*on_click)()) {
-    DrawRectangle(x, y, width, height, color);
-    int length = TextLength(text);
-    DrawText(text, x + width / 2 - length * 8, y + height / 2, 26, BLACK);
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        Vector2 mouse_pos = GetMousePosition();
-        if (CheckCollisionPointRec(mouse_pos,
-                                   (Rectangle){x, y, width, height})) {
-            on_click();
-        }
-    }
-}
-
 void reset_game() {
     enemy_rockets.clear();
     defender_rockets.clear();
     buildings.clear();
+    // clearing the json buildings
+    std::ifstream loadFile("buildings.json");
+    json j = json::array();
+    loadFile >> j;
+    j.clear();
+    ofstream newFile("buildings.json");
+    newFile << j;
     for (int i = 0;
          i < DEFENDER_ROCKET_NUM && i < ROCKET_PER_CAPSULE * iron_domes.size();
          i++) {
