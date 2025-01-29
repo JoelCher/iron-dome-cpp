@@ -1,7 +1,7 @@
 #pragma once
+#include "entity/entity.h"
 #include "main.h"
 #include "rocket/rocket.h"
-int iron_dome_program(void);
 #define GRID_SIZE 100
 #define MAX_ENEMY_ROCKET_NUM 100
 #define DEFENDER_ROCKET_NUM 200
@@ -31,3 +31,5 @@ void add_enemy_rocket();
 
 void add_building();
 void handle_mouse(Camera &camera);
+
+int iron_dome_program(void);

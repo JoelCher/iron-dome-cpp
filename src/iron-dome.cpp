@@ -28,6 +28,8 @@ struct {
     Vector3 start;
     Vector3 end;
 } mouse_surround_pos;
+// Entities selected by the mouse surround or by single click
+vector<Entity> selected_entities;
 
 int iron_dome_program(void) {
     // Loading json data about buildings
@@ -266,22 +268,15 @@ int iron_dome_program(void) {
         DrawLine3D((Vector3){0, 0, -WORLD_LENGTH / 2},
                    (Vector3){0, 0, WORLD_LENGTH / 2}, RED);
 
-        if (!is_surrounding) {
+        if (is_surrounding) {
             const float size_x =
-                abs(mouse_surround_pos.start.x - mouse_surround_pos.end.x);
+                (mouse_surround_pos.start.x - mouse_surround_pos.end.x);
             const float size_z =
-                abs(mouse_surround_pos.start.z - mouse_surround_pos.end.z);
-            DrawCubeV((Vector3){mouse_surround_pos.start.x + size_x / 2.0, 0,
-                                mouse_surround_pos.start.z + size_z / 2.0},
-                      (Vector3){size_x, 0, size_z}, RED);
-        } else {
-            const float size_x =
-                abs(mouse_surround_pos.start.x - mouse_surround_pos.end.x);
-            const float size_z =
-                abs(mouse_surround_pos.start.z - mouse_surround_pos.end.z);
-            DrawCubeV((Vector3){mouse_surround_pos.start.x + size_x / 2.0, 0,
-                                mouse_surround_pos.start.z + size_z / 2.0},
-                      (Vector3){size_x, 0, size_z}, RED);
+                (mouse_surround_pos.start.z - mouse_surround_pos.end.z);
+            DrawCubeWiresV((Vector3){mouse_surround_pos.start.x - size_x / 2.0,
+                                     0,
+                                     mouse_surround_pos.start.z - size_z / 2.0},
+                           (Vector3){abs(size_x), 0, abs(size_z)}, RED);
         }
         EndMode3D();
 
@@ -459,12 +454,13 @@ void handle_mouse(Camera &camera) {
             mouse_surround_pos.start.y = 0;
             mouse_surround_pos.start.z = plane_collision.point.z;
         } else {
-            cout << "Now I am here at the end " << plane_collision.point.x
-                 << endl;
             mouse_surround_pos.end.x = plane_collision.point.x;
             mouse_surround_pos.end.y = 0;
             mouse_surround_pos.end.z = plane_collision.point.z;
         }
+    } else if (IsMouseButtonUp && is_surrounding) {
+        // Now check who is inside the mouse boundaries
+
     } else {
         is_surrounding = false;
     }

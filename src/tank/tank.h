@@ -1,7 +1,6 @@
 #include "../../include/raylib.h"
-class Tank {
+#include "../entity/entity.h"
+class Tank : public Entity {
   public:
-    Vector2 position;
-
     Tank();
 };
