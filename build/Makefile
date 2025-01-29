@@ -129,6 +129,30 @@ Game/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/build
 .PHONY : Game/fast
 
+src/entity/entity.o: src/entity/entity.cpp.o
+.PHONY : src/entity/entity.o
+
+# target to build an object file
+src/entity/entity.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/entity/entity.cpp.o
+.PHONY : src/entity/entity.cpp.o
+
+src/entity/entity.i: src/entity/entity.cpp.i
+.PHONY : src/entity/entity.i
+
+# target to preprocess a source file
+src/entity/entity.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/entity/entity.cpp.i
+.PHONY : src/entity/entity.cpp.i
+
+src/entity/entity.s: src/entity/entity.cpp.s
+.PHONY : src/entity/entity.s
+
+# target to generate assembly for a file
+src/entity/entity.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/entity/entity.cpp.s
+.PHONY : src/entity/entity.cpp.s
+
 src/iron-dome.o: src/iron-dome.cpp.o
 .PHONY : src/iron-dome.o
 
@@ -234,6 +258,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... Game"
+	@echo "... src/entity/entity.o"
+	@echo "... src/entity/entity.i"
+	@echo "... src/entity/entity.s"
 	@echo "... src/iron-dome.o"
 	@echo "... src/iron-dome.i"
 	@echo "... src/iron-dome.s"

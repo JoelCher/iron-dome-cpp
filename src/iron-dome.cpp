@@ -460,8 +460,9 @@ void handle_mouse(Camera &camera) {
         }
     } else if (IsMouseButtonUp && is_surrounding) {
         // Now check who is inside the mouse boundaries
-
+        is_surrounding = false;
     } else {
+
         is_surrounding = false;
     }
 }
