@@ -2,6 +2,7 @@
 #include "entity/entity.h"
 #include "main.h"
 #include "rocket/rocket.h"
+#include "tank/tank.h"
 #define GRID_SIZE 100
 #define MAX_ENEMY_ROCKET_NUM 100
 #define DEFENDER_ROCKET_NUM 200
@@ -12,11 +13,13 @@
 #define WORLD_WIDTH 1400
 #define WORLD_LENGTH 700
 
-typedef struct {
+typedef struct
+{
     Vector3 pos;
     int remaining_rockets;
 } Capsule;
-typedef struct {
+typedef struct
+{
     Vector3 pos;
     Vector3 size;
     Color color;
