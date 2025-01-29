@@ -3,7 +3,7 @@
 #include <random>
 
 EnemyRocket::EnemyRocket() {
-    pos.x = -WORLD_WIDTH / 2 + 50;
+    pos.x = -200;
     pos.y = 100;
     pos.z = (rand() % 501) - 250;
     velocity.x = 30;

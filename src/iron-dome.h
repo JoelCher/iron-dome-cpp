@@ -9,7 +9,7 @@ int iron_dome_program(void);
 #define HIT_SUCCESS 30
 #define HIT_MISS 20
 #define FLYING 10
-#define WORLD_WIDTH 1000
+#define WORLD_WIDTH 1400
 #define WORLD_LENGTH 700
 
 typedef struct {
@@ -30,4 +30,4 @@ void handle_camera(Camera *camera);
 void add_enemy_rocket();
 
 void add_building();
-void handle_mouse();
+void handle_mouse(Camera &camera);

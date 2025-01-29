@@ -18,18 +18,18 @@ vector<EnemyRocket> enemy_rockets;
 
 vector<Capsule> iron_domes = {
     {{40, 0, -200}, 50}, {{40, 0, 200}, 50}, {{40, 0, 0}, 50}};
+
 Building new_building = {{-100, 50.0 / 2, 30}, {3, 50, 5}, WHITE};
 bool is_adding_building = false;
 vector<Building> buildings;
+
+bool is_surrounding = false;
+struct {
+    Vector3 start;
+    Vector3 end;
+} mouse_surround_pos;
+
 int iron_dome_program(void) {
-    Model model =
-        LoadModel("../resources/14077_WWII_Tank_Germany_Panzer_III_v1_L2.obj");
-    // Texture2D texture = LoadTexture(
-    //     "../resources/"
-    //     "14077_WWII_Tank_Germany_Panzer_III_turret_diff.png"); // Load
-    //                                                            // model
-    // // texture
-    // model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     // Loading json data about buildings
     std::ifstream loadFile("buildings.json");
     if (loadFile.is_open()) {
@@ -80,7 +80,7 @@ int iron_dome_program(void) {
     // ChangeDirectory(GetApplicationDirectory());
     Camera camera = {0};
     camera.position =
-        (Vector3){0.0f, 250.0f, WORLD_LENGTH / 2.0 + 40}; // Camera position
+        (Vector3){0.0f, 300.0f, WORLD_LENGTH / 2.0 + 40}; // Camera position
     camera.target = (Vector3){
         0.0f, 0.0f, WORLD_LENGTH / 2.0 - 200}; // Camera looking at point
     camera.up = (Vector3){0.0f, 1.0f,
@@ -97,6 +97,7 @@ int iron_dome_program(void) {
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
         handle_camera(&camera);
+        handle_mouse(camera);
 
         // Assigning targets to defender rockets
         // We need to check if there are any enemy rockets
@@ -157,8 +158,6 @@ int iron_dome_program(void) {
 
         BeginMode3D(camera);
 
-        DrawModelEx(model, (Vector3){-20, 0, 0}, (Vector3){1, 0, 0}, 270,
-                    (Vector3){10, 10, 10}, BLACK);
         // Drawing a floor
         DrawPlane((Vector3){0, 0, 0}, (Vector2){WORLD_WIDTH, WORLD_LENGTH},
                   LIGHTGRAY);
@@ -264,9 +263,26 @@ int iron_dome_program(void) {
             DrawCubeV(buildings[i].pos, buildings[i].size, buildings[i].color);
         }
 
-        DrawLine3D((Vector3){-WORLD_WIDTH / 2 + 50, 0, -WORLD_LENGTH / 2},
-                   (Vector3){-WORLD_WIDTH / 2 + 50, 0, WORLD_LENGTH / 2}, RED);
+        DrawLine3D((Vector3){0, 0, -WORLD_LENGTH / 2},
+                   (Vector3){0, 0, WORLD_LENGTH / 2}, RED);
 
+        if (!is_surrounding) {
+            const float size_x =
+                abs(mouse_surround_pos.start.x - mouse_surround_pos.end.x);
+            const float size_z =
+                abs(mouse_surround_pos.start.z - mouse_surround_pos.end.z);
+            DrawCubeV((Vector3){mouse_surround_pos.start.x + size_x / 2.0, 0,
+                                mouse_surround_pos.start.z + size_z / 2.0},
+                      (Vector3){size_x, 0, size_z}, RED);
+        } else {
+            const float size_x =
+                abs(mouse_surround_pos.start.x - mouse_surround_pos.end.x);
+            const float size_z =
+                abs(mouse_surround_pos.start.z - mouse_surround_pos.end.z);
+            DrawCubeV((Vector3){mouse_surround_pos.start.x + size_x / 2.0, 0,
+                                mouse_surround_pos.start.z + size_z / 2.0},
+                      (Vector3){size_x, 0, size_z}, RED);
+        }
         EndMode3D();
 
         GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
@@ -288,13 +304,7 @@ int iron_dome_program(void) {
         EndDrawing();
     }
 
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    UnloadModel(model); // Unload model
-    // UnloadTexture(texture);
     CloseWindow(); // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
-
     return 0;
 }
 
@@ -400,10 +410,10 @@ void add_enemy_rocket() {
 void handle_camera(Camera *camera) {
 
     float mouseWheelMovement = GetMouseWheelMove();
-    float t = 4.0f;
+    float t = 8.0f;
 
     if (IsKeyDown(KEY_UP)) {
-        if (!(camera->position.z - t < 200)) {
+        if (!(camera->position.z - t < 150)) {
             camera->position.z -= t;
             camera->target.z -= t;
         }
@@ -435,6 +445,27 @@ void handle_camera(Camera *camera) {
 
 void add_building() { is_adding_building = true; }
 
-void handle_mouse() {
+void handle_mouse(Camera &camera) {
     // I am trying to implement a mouse surround
+    if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+        Vector2 mouse_pos = GetMousePosition();
+        Ray ray = GetScreenToWorldRay(mouse_pos, camera);
+        RayCollision plane_collision = GetRayCollisionBox(
+            ray, (BoundingBox){{WORLD_WIDTH / 2, 0, WORLD_LENGTH / 2},
+                               {-WORLD_WIDTH / 2, 0, -WORLD_LENGTH / 2}});
+        if (!is_surrounding) {
+            is_surrounding = true;
+            mouse_surround_pos.start.x = plane_collision.point.x;
+            mouse_surround_pos.start.y = 0;
+            mouse_surround_pos.start.z = plane_collision.point.z;
+        } else {
+            cout << "Now I am here at the end " << plane_collision.point.x
+                 << endl;
+            mouse_surround_pos.end.x = plane_collision.point.x;
+            mouse_surround_pos.end.y = 0;
+            mouse_surround_pos.end.z = plane_collision.point.z;
+        }
+    } else {
+        is_surrounding = false;
+    }
 }
