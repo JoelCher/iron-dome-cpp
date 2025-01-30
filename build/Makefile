@@ -129,29 +129,53 @@ Game/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/build
 .PHONY : Game/fast
 
-src/entity/entity.o: src/entity/entity.cpp.o
-.PHONY : src/entity/entity.o
+src/entity/Entity.o: src/entity/Entity.cpp.o
+.PHONY : src/entity/Entity.o
 
 # target to build an object file
-src/entity/entity.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/entity/entity.cpp.o
-.PHONY : src/entity/entity.cpp.o
+src/entity/Entity.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/entity/Entity.cpp.o
+.PHONY : src/entity/Entity.cpp.o
 
-src/entity/entity.i: src/entity/entity.cpp.i
-.PHONY : src/entity/entity.i
+src/entity/Entity.i: src/entity/Entity.cpp.i
+.PHONY : src/entity/Entity.i
 
 # target to preprocess a source file
-src/entity/entity.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/entity/entity.cpp.i
-.PHONY : src/entity/entity.cpp.i
+src/entity/Entity.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/entity/Entity.cpp.i
+.PHONY : src/entity/Entity.cpp.i
 
-src/entity/entity.s: src/entity/entity.cpp.s
-.PHONY : src/entity/entity.s
+src/entity/Entity.s: src/entity/Entity.cpp.s
+.PHONY : src/entity/Entity.s
 
 # target to generate assembly for a file
-src/entity/entity.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/entity/entity.cpp.s
-.PHONY : src/entity/entity.cpp.s
+src/entity/Entity.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/entity/Entity.cpp.s
+.PHONY : src/entity/Entity.cpp.s
+
+src/gui-element/GuiElement.o: src/gui-element/GuiElement.cpp.o
+.PHONY : src/gui-element/GuiElement.o
+
+# target to build an object file
+src/gui-element/GuiElement.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/gui-element/GuiElement.cpp.o
+.PHONY : src/gui-element/GuiElement.cpp.o
+
+src/gui-element/GuiElement.i: src/gui-element/GuiElement.cpp.i
+.PHONY : src/gui-element/GuiElement.i
+
+# target to preprocess a source file
+src/gui-element/GuiElement.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/gui-element/GuiElement.cpp.i
+.PHONY : src/gui-element/GuiElement.cpp.i
+
+src/gui-element/GuiElement.s: src/gui-element/GuiElement.cpp.s
+.PHONY : src/gui-element/GuiElement.s
+
+# target to generate assembly for a file
+src/gui-element/GuiElement.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/gui-element/GuiElement.cpp.s
+.PHONY : src/gui-element/GuiElement.cpp.s
 
 src/iron-dome.o: src/iron-dome.cpp.o
 .PHONY : src/iron-dome.o
@@ -225,29 +249,29 @@ src/rocket/rocket.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/rocket/rocket.cpp.s
 .PHONY : src/rocket/rocket.cpp.s
 
-src/tank/tank.o: src/tank/tank.cpp.o
-.PHONY : src/tank/tank.o
+src/tank/Tank.o: src/tank/Tank.cpp.o
+.PHONY : src/tank/Tank.o
 
 # target to build an object file
-src/tank/tank.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/tank/tank.cpp.o
-.PHONY : src/tank/tank.cpp.o
+src/tank/Tank.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/tank/Tank.cpp.o
+.PHONY : src/tank/Tank.cpp.o
 
-src/tank/tank.i: src/tank/tank.cpp.i
-.PHONY : src/tank/tank.i
+src/tank/Tank.i: src/tank/Tank.cpp.i
+.PHONY : src/tank/Tank.i
 
 # target to preprocess a source file
-src/tank/tank.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/tank/tank.cpp.i
-.PHONY : src/tank/tank.cpp.i
+src/tank/Tank.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/tank/Tank.cpp.i
+.PHONY : src/tank/Tank.cpp.i
 
-src/tank/tank.s: src/tank/tank.cpp.s
-.PHONY : src/tank/tank.s
+src/tank/Tank.s: src/tank/Tank.cpp.s
+.PHONY : src/tank/Tank.s
 
 # target to generate assembly for a file
-src/tank/tank.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/tank/tank.cpp.s
-.PHONY : src/tank/tank.cpp.s
+src/tank/Tank.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/tank/Tank.cpp.s
+.PHONY : src/tank/Tank.cpp.s
 
 # Help Target
 help:
@@ -258,9 +282,12 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... Game"
-	@echo "... src/entity/entity.o"
-	@echo "... src/entity/entity.i"
-	@echo "... src/entity/entity.s"
+	@echo "... src/entity/Entity.o"
+	@echo "... src/entity/Entity.i"
+	@echo "... src/entity/Entity.s"
+	@echo "... src/gui-element/GuiElement.o"
+	@echo "... src/gui-element/GuiElement.i"
+	@echo "... src/gui-element/GuiElement.s"
 	@echo "... src/iron-dome.o"
 	@echo "... src/iron-dome.i"
 	@echo "... src/iron-dome.s"
@@ -270,9 +297,9 @@ help:
 	@echo "... src/rocket/rocket.o"
 	@echo "... src/rocket/rocket.i"
 	@echo "... src/rocket/rocket.s"
-	@echo "... src/tank/tank.o"
-	@echo "... src/tank/tank.i"
-	@echo "... src/tank/tank.s"
+	@echo "... src/tank/Tank.o"
+	@echo "... src/tank/Tank.i"
+	@echo "... src/tank/Tank.s"
 .PHONY : help
 
 

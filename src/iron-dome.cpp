@@ -1,40 +1,44 @@
 #include "./iron-dome.h"
 #include "../include/json.hpp"
 #include "rocket/rocket.h"
+#include "gui-element/GuiElement.h"
 #include <fstream>
 #include <iostream>
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string>
 #include <vector>
 using json = nlohmann::json;
 #define RAYGUI_IMPLEMENTATION
 #include "../include/raygui.h"
 using namespace std;
 
-vector<DefenderRocket> defender_rockets;
-vector<EnemyRocket> enemy_rockets;
+vector<DefenderRocket> defenderRockets;
+vector<EnemyRocket> enemyRockets;
 
-vector<Capsule> iron_domes = {
+vector<Capsule> ironDomes = {
     {{40, 0, -200}, 50}, {{40, 0, 200}, 50}, {{40, 0, 0}, 50}};
 
-Building new_building = {{-100, 50.0 / 2, 30}, {3, 50, 5}, WHITE};
-bool is_adding_building = false;
+Building newBuilding = {{-100, 50.0 / 2, 30}, {3, 50, 5}, WHITE};
+bool isAddingBuilding = false;
 vector<Building> buildings;
 
-bool is_surrounding = false;
+bool isSurrounding = false;
 struct
 {
     Vector3 start;
     Vector3 end;
 } mouse_surround_pos;
 // Entities selected by the mouse surround or by single click
-vector<Tank> selected_entities;
+vector<Tank *> selectedEntities;
 vector<Tank> tanks;
+Vector3 selectedEntitiesTarget;
+bool has_selected_target_position = false;
 
 int iron_dome_program(void)
 {
+    GuiElement resetButton({SCREEN_WIDTH - 450, SCREEN_HEIGHT - 100, 120, 30});
+    GuiElement addBuildingButton({SCREEN_WIDTH - 650, SCREEN_HEIGHT - 100, 200, 30});
+    GuiElement shootRocketButton({SCREEN_WIDTH - 300, SCREEN_HEIGHT - 100, 300, 30});
     // Loading json data about buildings
     Model model = LoadModel("../resources/untitled.obj");
     std::ifstream loadFile("buildings.json");
@@ -61,9 +65,6 @@ int iron_dome_program(void)
             building.size.z = size_z;
             buildings.push_back(building);
         }
-        // Access nested data
-
-        // Print data
     }
     else
     {
@@ -71,20 +72,20 @@ int iron_dome_program(void)
     }
     // Initializing the defender rockets
     for (int i = 0;
-         i < DEFENDER_ROCKET_NUM && i < ROCKET_PER_CAPSULE * iron_domes.size();
+         i < DEFENDER_ROCKET_NUM && i < ROCKET_PER_CAPSULE * ironDomes.size();
          i++)
     {
         // Setting at -1 means they have not been launched yet
-        DefenderRocket new_rocket;
-        new_rocket.rocket_target = -1;
+        DefenderRocket newRocket;
+        newRocket.rocketTarget = -1;
         // Each iron dome capsule receives 50 rockets
-        int iron_dome_id = i / ROCKET_PER_CAPSULE;
-        new_rocket.iron_dome_id = iron_dome_id;
-        new_rocket.pos.x = iron_domes[iron_dome_id].pos.x;
-        new_rocket.pos.y = 1.0 / 2;
-        new_rocket.pos.z = iron_domes[iron_dome_id].pos.z;
-        new_rocket.length = 2;
-        defender_rockets.push_back(new_rocket);
+        int ironDomeId = i / ROCKET_PER_CAPSULE;
+        newRocket.ironDomeId = ironDomeId;
+        newRocket.pos.x = ironDomes[ironDomeId].pos.x;
+        newRocket.pos.y = 1.0 / 2;
+        newRocket.pos.z = ironDomes[ironDomeId].pos.z;
+        newRocket.length = 2;
+        defenderRockets.push_back(newRocket);
     }
 
     // Define the camera to look into our 3d world
@@ -100,13 +101,9 @@ int iron_dome_program(void)
     camera.projection = CAMERA_PERSPECTIVE; // Camera projection type
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
-    // Texture2D background =
-    //     LoadTexture("../resources/Remove background project.png");
-    // BoundingBox rocket_bounds = GetMeshBoundingBox(rocket_model.meshes[0]);
-    // Main game loop
     Tank new_tank;
     new_tank.pos = {-200, 10, 100};
-    new_tank.bounding_box = {.min = {new_tank.pos.x, 0, new_tank.pos.z}, {new_tank.pos.x + 10, new_tank.pos.y + 10, new_tank.pos.z + 10}};
+    new_tank.bounding_box = {.min = {new_tank.pos.x, 0, new_tank.pos.z}, {new_tank.pos.x, new_tank.pos.y + 10, new_tank.pos.z}};
     tanks.push_back(new_tank);
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
@@ -115,28 +112,28 @@ int iron_dome_program(void)
 
         // Assigning targets to defender rockets
         // We need to check if there are any enemy rockets
-        if (enemy_rockets.size())
+        if (enemyRockets.size())
         {
-            for (int i = 0; i < enemy_rockets.size(); i++)
+            for (int i = 0; i < enemyRockets.size(); i++)
             {
                 // Check if there is already a defender rocket assigned to this
                 // rocket
                 bool is_already_assigned = false;
                 for (int j = 0; j < DEFENDER_ROCKET_NUM; j++)
                 {
-                    if (defender_rockets[j].rocket_target == i)
+                    if (defenderRockets[j].rocketTarget == i)
                         is_already_assigned = true;
                 }
                 if (!is_already_assigned)
                 {
                     // Then assign some defender rocket to this enemy rocket
                     // Check which capsule is closest to that rocket
-                    EnemyRocket curr_enemy_rocket = enemy_rockets[i];
+                    EnemyRocket curr_enemy_rocket = enemyRockets[i];
                     int closest_capsule = 0;
                     double closest_distance = -1;
-                    for (int z = 0; z < iron_domes.size(); z++)
+                    for (int z = 0; z < ironDomes.size(); z++)
                     {
-                        Capsule curr_capsule = iron_domes[z];
+                        Capsule curr_capsule = ironDomes[z];
                         double x_diff =
                             curr_enemy_rocket.pos.x - curr_capsule.pos.x;
                         double y_diff =
@@ -155,13 +152,13 @@ int iron_dome_program(void)
                     }
                     for (int j = 0; j < DEFENDER_ROCKET_NUM; j++)
                     {
-                        if (defender_rockets[j].iron_dome_id ==
+                        if (defenderRockets[j].ironDomeId ==
                                 closest_capsule &&
-                            defender_rockets[j].rocket_target == -1)
+                            defenderRockets[j].rocketTarget == -1)
                         {
-                            defender_rockets[j].rocket_target = i;
-                            defender_rockets[j].status = FLYING;
-                            iron_domes[defender_rockets[j].iron_dome_id]
+                            defenderRockets[j].rocketTarget = i;
+                            defenderRockets[j].status = FLYING;
+                            ironDomes[defenderRockets[j].ironDomeId]
                                 .remaining_rockets--;
                             break;
                         }
@@ -175,41 +172,43 @@ int iron_dome_program(void)
 
         BeginDrawing();
         ClearBackground(BLACK);
-        // DrawTexture(background, 0, 0, WHITE); // Draw the image at (0, 0)
 
         BeginMode3D(camera);
         // Draw around all selected entities
-        for (const Tank &entity : selected_entities)
+        for (const Tank *entity : selectedEntities)
         {
-            DrawBoundingBox(entity.bounding_box, RED);
+            DrawBoundingBox(entity->bounding_box, RED);
         }
 
-        DrawModel(model, new_tank.pos, 2, WHITE);
+        for (const Tank &tank : tanks)
+        {
+            DrawModel(model, tank.pos, 2, WHITE);
+        }
 
         // Drawing a floor
         DrawPlane((Vector3){0, 0, 0}, (Vector2){WORLD_WIDTH, WORLD_LENGTH},
                   LIGHTGRAY);
         // Drawing the iron dome capsules
-        for (int i = 0; i < iron_domes.size(); i++)
+        for (int i = 0; i < ironDomes.size(); i++)
         {
-            DrawSphere(iron_domes[i].pos, 5, BLUE);
+            DrawSphere(ironDomes[i].pos, 5, BLUE);
         }
         // Drawing the enemy rocket
-        for (int i = 0; i < enemy_rockets.size(); i++)
+        for (int i = 0; i < enemyRockets.size(); i++)
         {
-            if (enemy_rockets[i].is_destroyed)
+            if (enemyRockets[i].isDestroyed)
                 continue;
-            // DrawCubeV(enemy_rockets[i].pos, enemy_rockets[i].size, RED);
-            // DrawCubeWiresV(enemy_rockets[i].pos, enemy_rockets[i].size, RED);
-            Vector3 curr_pos = enemy_rockets[i].pos;
-            Vector3 curr_velocity = enemy_rockets[i].velocity;
+            // DrawCubeV(enemyRockets[i].pos, enemyRockets[i].size, RED);
+            // DrawCubeWiresV(enemyRockets[i].pos, enemyRockets[i].size, RED);
+            Vector3 curr_pos = enemyRockets[i].pos;
+            Vector3 curr_velocity = enemyRockets[i].velocity;
             // Calc the velocity norm
             double speed = sqrt(curr_velocity.x * curr_velocity.x +
                                 curr_velocity.y * curr_velocity.y +
                                 curr_velocity.z * curr_velocity.z);
             // The size of the rocket is 2, so I need to find the number to
             // divide bla bla bla(I dont know how to explain, im stupid)
-            float d = speed / enemy_rockets[i].length;
+            float d = speed / enemyRockets[i].length;
             DrawCapsule(curr_pos,
                         (Vector3){curr_pos.x - curr_velocity.x / d,
                                   curr_pos.y - curr_velocity.y / d,
@@ -222,17 +221,17 @@ int iron_dome_program(void)
                              1.2f, 8, 8, PURPLE);
         }
 
-        for (int i = 0; i < defender_rockets.size(); i++)
+        for (int i = 0; i < defenderRockets.size(); i++)
         {
-            if (defender_rockets[i].rocket_target != -1 &&
-                defender_rockets[i].status == FLYING)
+            if (defenderRockets[i].rocketTarget != -1 &&
+                defenderRockets[i].status == FLYING)
             {
-                Vector3 curr_pos = defender_rockets[i].pos;
-                Vector3 curr_velocity = defender_rockets[i].velocity;
+                Vector3 curr_pos = defenderRockets[i].pos;
+                Vector3 curr_velocity = defenderRockets[i].velocity;
                 double speed = sqrt(curr_velocity.x * curr_velocity.x +
                                     curr_velocity.y * curr_velocity.y +
                                     curr_velocity.z * curr_velocity.z);
-                float d = speed / defender_rockets[i].length;
+                float d = speed / defenderRockets[i].length;
                 DrawCapsule(curr_pos,
                             (Vector3){curr_pos.x - curr_velocity.x / d,
                                       curr_pos.y - curr_velocity.y / d,
@@ -246,21 +245,52 @@ int iron_dome_program(void)
             }
         }
 
-        if (is_adding_building)
+        if (has_selected_target_position)
         {
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            for (Tank *tank : selectedEntities)
+            {
+                // Move to that direction
+                // I need to shrink the distance vector to the speed of the tank(which is tank.speed)
+                Vector3 distance_v = {selectedEntitiesTarget.x - tank->pos.x, 0, selectedEntitiesTarget.z - tank->pos.z};
+                float distance_norm = sqrt(distance_v.x * distance_v.x + distance_v.z * distance_v.z);
+                if (distance_norm < 1)
+                    continue;
+                float x_dir = distance_v.x * (tank->speed / distance_norm);
+                float z_dir = distance_v.z * (tank->speed / distance_norm);
+                tank->pos.z += z_dir / 60.0;
+                tank->pos.x += x_dir / 60.0;
+            }
+        }
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !GuiElement::isClickingGuiElement())
+        {
+            // Translating the mouse click to the 3d platform
+            Vector2 mouse_pos = GetMousePosition();
+            Ray ray = GetMouseRay(mouse_pos, camera);
+            RayCollision real_mouse_pos = GetRayCollisionBox(
+                ray,
+                (BoundingBox){{WORLD_WIDTH / 2, 0, WORLD_LENGTH / 2},
+                              {-WORLD_WIDTH / 2, 0, -WORLD_LENGTH / 2}});
+            if (selectedEntities.size())
+            {
+                selectedEntitiesTarget = real_mouse_pos.point;
+                has_selected_target_position = true;
+            }
+        }
+        if (isAddingBuilding)
+        {
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !GuiElement::isClickingGuiElement())
             {
                 // Place the building
                 Building building_to_add;
-                building_to_add.pos.x = new_building.pos.x;
-                building_to_add.pos.y = new_building.pos.y;
-                building_to_add.pos.z = new_building.pos.z;
-                building_to_add.size.x = new_building.size.x;
-                building_to_add.size.y = new_building.size.y;
-                building_to_add.size.z = new_building.size.z;
-                building_to_add.color = new_building.color;
+                building_to_add.pos.x = newBuilding.pos.x;
+                building_to_add.pos.y = newBuilding.pos.y;
+                building_to_add.pos.z = newBuilding.pos.z;
+                building_to_add.size.x = newBuilding.size.x;
+                building_to_add.size.y = newBuilding.size.y;
+                building_to_add.size.z = newBuilding.size.z;
+                building_to_add.color = newBuilding.color;
                 buildings.push_back(building_to_add);
-                is_adding_building = false;
+                isAddingBuilding = false;
                 ShowCursor();
 
                 // Add the building to the json database
@@ -288,10 +318,10 @@ int iron_dome_program(void)
                     pos,
                     (BoundingBox){{WORLD_WIDTH / 2, 0, WORLD_LENGTH / 2},
                                   {-WORLD_WIDTH / 2, 0, -WORLD_LENGTH / 2}});
-                new_building.pos.x = collision.point.x;
-                new_building.pos.z = collision.point.z;
-                DrawCubeV(new_building.pos, new_building.size,
-                          new_building.color);
+                newBuilding.pos.x = collision.point.x;
+                newBuilding.pos.z = collision.point.z;
+                DrawCubeV(newBuilding.pos, newBuilding.size,
+                          newBuilding.color);
             }
         }
         // Just drawing a bunch of buildings
@@ -303,7 +333,7 @@ int iron_dome_program(void)
         DrawLine3D((Vector3){0, 0, -WORLD_LENGTH / 2},
                    (Vector3){0, 0, WORLD_LENGTH / 2}, RED);
 
-        if (is_surrounding)
+        if (isSurrounding)
         {
             const float size_x =
                 (mouse_surround_pos.start.x - mouse_surround_pos.end.x);
@@ -318,19 +348,19 @@ int iron_dome_program(void)
 
         GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
         if (GuiButton(
-                (Rectangle){SCREEN_WIDTH - 450, SCREEN_HEIGHT - 100, 120, 30},
+                resetButton.pos_rec,
                 "Reset"))
         {
             reset_game();
         }
         if (GuiButton(
-                (Rectangle){SCREEN_WIDTH - 300, SCREEN_HEIGHT - 100, 300, 30},
+                shootRocketButton.pos_rec,
                 "Shoot enemy rocket"))
         {
             add_enemy_rocket();
         }
         if (GuiButton(
-                (Rectangle){SCREEN_WIDTH - 650, SCREEN_HEIGHT - 100, 200, 30},
+                addBuildingButton.pos_rec,
                 "Add building"))
         {
             add_building();
@@ -348,23 +378,23 @@ void check_rockets_collision()
     for (int i = 0; i < DEFENDER_ROCKET_NUM; i++)
     {
         // Dont check for destroyed rockets
-        if (defender_rockets[i].status != FLYING)
+        if (defenderRockets[i].status != FLYING)
             continue;
-        for (int j = 0; j < enemy_rockets.size(); j++)
+        for (int j = 0; j < enemyRockets.size(); j++)
         {
-            if (enemy_rockets[j].is_destroyed)
+            if (enemyRockets[j].isDestroyed)
                 continue;
-            double z_diff = enemy_rockets[j].pos.z - defender_rockets[i].pos.z;
-            double y_diff = enemy_rockets[j].pos.y - defender_rockets[i].pos.y;
-            double x_diff = enemy_rockets[j].pos.x - defender_rockets[i].pos.x;
+            double z_diff = enemyRockets[j].pos.z - defenderRockets[i].pos.z;
+            double y_diff = enemyRockets[j].pos.y - defenderRockets[i].pos.y;
+            double x_diff = enemyRockets[j].pos.x - defenderRockets[i].pos.x;
             // calc square root(size z^2 + y^2 +x^2)
             double diff_norma =
                 sqrt(z_diff * z_diff + y_diff * y_diff + z_diff * z_diff);
             if (diff_norma < 2)
             {
                 // Stop those two rockets
-                enemy_rockets[j].is_destroyed = true;
-                defender_rockets[i].status = HIT_SUCCESS;
+                enemyRockets[j].isDestroyed = true;
+                defenderRockets[i].status = HIT_SUCCESS;
             }
         }
     }
@@ -373,23 +403,23 @@ void check_rockets_collision()
 void update_positions()
 {
     int animFrames = 0;
-    for (int i = 0; i < enemy_rockets.size(); i++)
+    for (int i = 0; i < enemyRockets.size(); i++)
     {
-        enemy_rockets[i].update_position();
+        enemyRockets[i].update_position();
     }
     // Calc next speed based on position of enemy rocket
 
     for (int i = 0; i < DEFENDER_ROCKET_NUM; i++)
     {
-        DefenderRocket *curr = &defender_rockets[i];
+        DefenderRocket *curr = &defenderRockets[i];
         if (curr->status != FLYING)
             continue;
-        int target = curr->rocket_target;
+        int target = curr->rocketTarget;
         if (target == -1)
             continue;
-        EnemyRocket target_rocket = enemy_rockets[target];
+        EnemyRocket target_rocket = enemyRockets[target];
         // If the target is destroyed by another rocket, then disappear
-        if (target_rocket.is_destroyed)
+        if (target_rocket.isDestroyed)
         {
             curr->status = HIT_SUCCESS;
             continue;
@@ -402,10 +432,10 @@ void update_positions()
         double diff_norma =
             sqrt(z_diff * z_diff + y_diff * y_diff + z_diff * z_diff);
 
-        double ration_to_const_speed = diff_norma / defender_velocity_norma;
-        double z_dir = z_diff / ration_to_const_speed;
-        double y_dir = y_diff / ration_to_const_speed;
-        double x_dir = x_diff / ration_to_const_speed;
+        double ration_to_const_speed = defender_velocity_norma / diff_norma;
+        double z_dir = z_diff * ration_to_const_speed;
+        double y_dir = y_diff * ration_to_const_speed;
+        double x_dir = x_diff * ration_to_const_speed;
         // Updating velocity
         curr->velocity.x = x_dir;
         curr->velocity.y = y_dir;
@@ -419,8 +449,8 @@ void update_positions()
 
 void reset_game()
 {
-    enemy_rockets.clear();
-    defender_rockets.clear();
+    enemyRockets.clear();
+    defenderRockets.clear();
     buildings.clear();
     // clearing the json buildings
     std::ifstream loadFile("buildings.json");
@@ -430,27 +460,27 @@ void reset_game()
     ofstream newFile("buildings.json");
     newFile << j;
     for (int i = 0;
-         i < DEFENDER_ROCKET_NUM && i < ROCKET_PER_CAPSULE * iron_domes.size();
+         i < DEFENDER_ROCKET_NUM && i < ROCKET_PER_CAPSULE * ironDomes.size();
          i++)
     {
         // Setting at -1 means they have not been launched yet
         DefenderRocket new_rocket;
-        new_rocket.rocket_target = -1;
+        new_rocket.rocketTarget = -1;
         // Each iron dome capsule receives 50 rockets
-        int iron_dome_id = i / ROCKET_PER_CAPSULE;
-        new_rocket.iron_dome_id = iron_dome_id;
-        new_rocket.pos.x = iron_domes[iron_dome_id].pos.x;
+        int ironDomeId = i / ROCKET_PER_CAPSULE;
+        new_rocket.ironDomeId = ironDomeId;
+        new_rocket.pos.x = ironDomes[ironDomeId].pos.x;
         new_rocket.pos.y = 1.0 / 2;
-        new_rocket.pos.z = iron_domes[iron_dome_id].pos.z;
+        new_rocket.pos.z = ironDomes[ironDomeId].pos.z;
         new_rocket.length = 2;
-        defender_rockets.push_back(new_rocket);
+        defenderRockets.push_back(new_rocket);
     }
 }
 
 void add_enemy_rocket()
 {
     EnemyRocket new_rocket;
-    enemy_rockets.push_back(new_rocket);
+    enemyRockets.push_back(new_rocket);
 }
 
 void handle_camera(Camera *camera)
@@ -496,19 +526,19 @@ void handle_camera(Camera *camera)
     // }
 }
 
-void add_building() { is_adding_building = true; }
+void add_building() { isAddingBuilding = true; }
 
 void handle_mouse(Camera &camera)
 {
     // I am trying to implement a mouse surround
-    if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+    if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && !GuiElement::isClickingGuiElement())
     {
         Vector2 mouse_pos = GetMousePosition();
         Ray ray = GetScreenToWorldRay(mouse_pos, camera);
         RayCollision plane_collision = GetRayCollisionBox(
             ray, (BoundingBox){{WORLD_WIDTH / 2, 0, WORLD_LENGTH / 2},
                                {-WORLD_WIDTH / 2, 0, -WORLD_LENGTH / 2}});
-        if (!is_surrounding)
+        if (!isSurrounding)
         {
             mouse_surround_pos.start.x = plane_collision.point.x;
             mouse_surround_pos.start.y = 0;
@@ -516,7 +546,7 @@ void handle_mouse(Camera &camera)
             mouse_surround_pos.end.x = plane_collision.point.x;
             mouse_surround_pos.end.y = 0;
             mouse_surround_pos.end.z = plane_collision.point.z;
-            is_surrounding = true;
+            isSurrounding = true;
         }
         else
         {
@@ -531,21 +561,21 @@ void handle_mouse(Camera &camera)
                 bool is_collision = CheckCollisionBoxes(mouse_box, tanks[i].bounding_box);
                 if (is_collision)
                 {
-                    cout << "YEAH HERE\n";
-                    selected_entities.push_back(tanks[i]);
+                    selectedEntities.clear();
+                    selectedEntities.push_back(&tanks[i]);
                 }
             }
         }
     }
-    else if (IsMouseButtonUp && is_surrounding)
+    else if (IsMouseButtonUp(MOUSE_LEFT_BUTTON) && isSurrounding)
     {
         // Now check who is inside the mouse boundaries
-        is_surrounding = false;
-        selected_entities.clear();
+        isSurrounding = false;
+        // selectedEntities.clear();
     }
     else
     {
-        selected_entities.clear();
-        is_surrounding = false;
+        // selectedEntities.clear();
+        isSurrounding = false;
     }
 }

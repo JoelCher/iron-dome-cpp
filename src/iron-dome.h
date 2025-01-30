@@ -1,8 +1,8 @@
 #pragma once
-#include "entity/entity.h"
+#include "entity/Entity.h"
 #include "main.h"
 #include "rocket/rocket.h"
-#include "tank/tank.h"
+#include "tank/Tank.h"
 #define GRID_SIZE 100
 #define MAX_ENEMY_ROCKET_NUM 100
 #define DEFENDER_ROCKET_NUM 200
@@ -26,6 +26,7 @@ typedef struct
     bool is_placed;
 } Building;
 
+bool is_pressing_on_gui_element();
 void update_positions();
 void check_rockets_collision();
 void reset_game();

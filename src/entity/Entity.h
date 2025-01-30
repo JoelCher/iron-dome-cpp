@@ -5,4 +5,6 @@ class Entity
 {
 public:
   Vector3 pos;
+  Vector3 velocity;
+  float speed;
 };
