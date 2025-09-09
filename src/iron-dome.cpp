@@ -1,7 +1,6 @@
 #include "./iron-dome.h"
 #include "gui-element/GuiElement.h"
 #include "rocket/rocket.h"
-#include <iostream>
 #include <math.h>
 #include <stdlib.h>
 #include <vector>
@@ -76,7 +75,6 @@ int iron_dome_program(void) {
     {
         handle_camera(&camera);
         handle_mouse(&camera);
-
         // Assigning targets to defender rockets
         // We need to check if there are any enemy rockets
         if (enemyRockets.size()) {
@@ -410,20 +408,19 @@ void handle_camera(Camera *camera) {
         camera->position.x -= t;
         camera->target.x -= t;
     }
-
-    // Zoom in/out - this is for now cancelled, until I figure this shit out
-    // if (mouseWheelMovement != 0) {
-    //     if (mouseWheelMovement < 0) {
-    //         camera->position.y += 10;
-    //     } else {
-    //         camera->position.y -= 10;
-    //     }
-    // }
 }
 
 void add_building() { isAddingBuilding = true; }
 
 void handle_mouse(Camera *camera) {
+
+    // Handle pov changing
+    if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
+        Vector2 mouseDelta = GetMouseDelta();
+        // Move the target of the camera based on mouse movement now
+        camera->target.x += mouseDelta.x;
+        camera->target.y -= mouseDelta.y;
+    }
 
     // Handle mouse scroll wheel
     int mouseWheelMove = GetMouseWheelMove();

@@ -1,5 +1,4 @@
 #include "rocket.h"
-#include "../iron-dome.h"
 #include <random>
 
 EnemyRocket::EnemyRocket() {
