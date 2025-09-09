@@ -2,25 +2,24 @@
 #include "../../include/raylib.h"
 #include "../entity/Entity.h"
 
-class Rocket : public Entity
-{
-public:
-  Vector3 pos;
-  Vector3 velocity;
-  int length;
+class Rocket : public Entity {
+  public:
+    Vector3 pos;
+    Vector3 velocity;
+    int length;
 };
 
-class EnemyRocket : public Rocket
-{
-public:
-  bool isDestroyed;
-  EnemyRocket();
-  void update_position();
+class EnemyRocket : public Rocket {
+  public:
+    bool isDestroyed;
+    EnemyRocket();
+    void update_position();
 };
-class DefenderRocket : public Rocket
-{
-public:
-  int ironDomeId;
-  int rocketTarget;
-  int status;
+class DefenderRocket : public Rocket {
+  public:
+    int ironDomeId;
+    int rocketTarget;
+    int status;
+    float speed = 40.0f;
+    Vector3 targetPosition;
 };

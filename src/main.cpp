@@ -1,7 +1,6 @@
 #include "main.h"
 #include "../include/raylib.h"
 #include "iron-dome.h"
-#include <iostream>
 int main() {
     init_window();
     iron_dome_program();

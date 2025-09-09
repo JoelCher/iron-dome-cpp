@@ -1,4 +1,4 @@
-# Install script for directory: /home/joel-cher/projects/irom-dome-cpp
+# Install script for directory: /home/joel/projects/irom-dome-cpp
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/joel-cher/projects/irom-dome-cpp/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/joel/projects/irom-dome-cpp/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
