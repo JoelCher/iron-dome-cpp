@@ -2,6 +2,7 @@
 #include "entity/Entity.h"
 #include "gui-element/GuiElement.h"
 #include "main.h"
+#include "rocket/defender-rocket.h"
 #include "rocket/enemy-rocket.h"
 #include "rocket/rocket.h"
 #include "tank/Tank.h"

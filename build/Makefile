@@ -249,6 +249,30 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/rocket/defender-rocket.o: src/rocket/defender-rocket.cpp.o
+.PHONY : src/rocket/defender-rocket.o
+
+# target to build an object file
+src/rocket/defender-rocket.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/rocket/defender-rocket.cpp.o
+.PHONY : src/rocket/defender-rocket.cpp.o
+
+src/rocket/defender-rocket.i: src/rocket/defender-rocket.cpp.i
+.PHONY : src/rocket/defender-rocket.i
+
+# target to preprocess a source file
+src/rocket/defender-rocket.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/rocket/defender-rocket.cpp.i
+.PHONY : src/rocket/defender-rocket.cpp.i
+
+src/rocket/defender-rocket.s: src/rocket/defender-rocket.cpp.s
+.PHONY : src/rocket/defender-rocket.s
+
+# target to generate assembly for a file
+src/rocket/defender-rocket.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/rocket/defender-rocket.cpp.s
+.PHONY : src/rocket/defender-rocket.cpp.s
+
 src/rocket/enemy-rocket.o: src/rocket/enemy-rocket.cpp.o
 .PHONY : src/rocket/enemy-rocket.o
 
@@ -345,6 +369,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/rocket/defender-rocket.o"
+	@echo "... src/rocket/defender-rocket.i"
+	@echo "... src/rocket/defender-rocket.s"
 	@echo "... src/rocket/enemy-rocket.o"
 	@echo "... src/rocket/enemy-rocket.i"
 	@echo "... src/rocket/enemy-rocket.s"

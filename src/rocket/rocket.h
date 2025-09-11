@@ -11,11 +11,4 @@ class Rocket : public Entity {
     bool hasFallen();
 };
 
-class DefenderRocket : public Rocket {
-  public:
-    int ironDomeId;
-    int rocketTarget;
-    int status;
-    float speed = 40.0f;
-    Vector3 targetPosition;
-};
+

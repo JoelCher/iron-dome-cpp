@@ -1,5 +1,6 @@
 #include "./iron-dome.h"
 #include "gui-element/GuiElement.h"
+#include "rocket/enemy-rocket.h"
 #include "rocket/rocket.h"
 #include <iostream>
 #include <math.h>
@@ -99,38 +100,13 @@ void IronDomeProgram::update_positions() {
     }
 
     // Calc next speed based on position of enemy rocket
-    for (int i = 0; i < DEFENDER_ROCKET_NUM; i++) {
-        DefenderRocket *curr = &defenderRockets[i];
-        if (curr->status != FLYING)
-            continue;
-        int target = curr->rocketTarget;
+    for (int i = 0; i < defenderRockets.size(); i++) {
+        int target = defenderRockets[i].rocketTarget;
+        std::cout << "Target is " << target << std::endl;
         if (target == -1)
             continue;
-        EnemyRocket target_rocket = enemyRockets[target];
-        // If the target is destroyed by another rocket, then disappear
-        if (target_rocket.destroyedPercentage == 100) {
-            curr->status = HIT_SUCCESS;
-            continue;
-        }
-        double z_diff = target_rocket.pos.z - curr->pos.z;
-        double y_diff = target_rocket.pos.y - curr->pos.y;
-        double x_diff = target_rocket.pos.x - curr->pos.x;
-        // calc sqaure root(size z^2 + y^2 +x^2)
-        double diff_norma =
-            sqrt(z_diff * z_diff + y_diff * y_diff + z_diff * z_diff);
-
-        double ration_to_const_speed = curr->speed / diff_norma;
-        double z_dir = z_diff * ration_to_const_speed;
-        double y_dir = y_diff * ration_to_const_speed;
-        double x_dir = x_diff * ration_to_const_speed;
-        // Updating velocity
-        curr->velocity.x = x_dir;
-        curr->velocity.y = y_dir;
-        curr->velocity.z = z_dir;
-        // Updating defender position
-        curr->pos.x += (x_dir / 60.0);
-        curr->pos.y += (y_dir / 60.0);
-        curr->pos.z += (z_dir / 60.0);
+        EnemyRocket targetRocket = enemyRockets[target];
+        defenderRockets[i].updatePosition(targetRocket);
     }
 }
 
