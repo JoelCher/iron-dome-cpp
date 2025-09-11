@@ -1,0 +1,13 @@
+- Make enemy rocket be able to split to avoid being hit by denfender rocket
+- Check collision between rockets and buildings, have some sort of punishment system
+- Have better visual effects for rockets hitting each other, or other things
+- Have sounds
+- Implement a system where the enemty rocket is able to run away from the defending rocket
+- Add multiple alogorithims of chice for chasing the rocket
+I plan to implement a system where every destroyed object gets slowly disiimilated and riped into smaller geometrical pieces.
+
+
+- Have a smoke trail following the rockets - figure out how to deal with meshes and stuff like that 
+
+
+- Make the enemey rocket know what it's target is

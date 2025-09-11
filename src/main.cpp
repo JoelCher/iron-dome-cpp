@@ -3,7 +3,8 @@
 #include "iron-dome.h"
 int main() {
     init_window();
-    iron_dome_program();
+    IronDomeProgram ironDomeProgram;
+    ironDomeProgram.init();
 
     return 0;
 }

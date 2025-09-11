@@ -153,6 +153,30 @@ src/entity/Entity.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/entity/Entity.cpp.s
 .PHONY : src/entity/Entity.cpp.s
 
+src/functions/functions.o: src/functions/functions.cpp.o
+.PHONY : src/functions/functions.o
+
+# target to build an object file
+src/functions/functions.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/functions/functions.cpp.o
+.PHONY : src/functions/functions.cpp.o
+
+src/functions/functions.i: src/functions/functions.cpp.i
+.PHONY : src/functions/functions.i
+
+# target to preprocess a source file
+src/functions/functions.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/functions/functions.cpp.i
+.PHONY : src/functions/functions.cpp.i
+
+src/functions/functions.s: src/functions/functions.cpp.s
+.PHONY : src/functions/functions.s
+
+# target to generate assembly for a file
+src/functions/functions.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/functions/functions.cpp.s
+.PHONY : src/functions/functions.cpp.s
+
 src/gui-element/GuiElement.o: src/gui-element/GuiElement.cpp.o
 .PHONY : src/gui-element/GuiElement.o
 
@@ -225,6 +249,30 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/rocket/enemy-rocket.o: src/rocket/enemy-rocket.cpp.o
+.PHONY : src/rocket/enemy-rocket.o
+
+# target to build an object file
+src/rocket/enemy-rocket.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/rocket/enemy-rocket.cpp.o
+.PHONY : src/rocket/enemy-rocket.cpp.o
+
+src/rocket/enemy-rocket.i: src/rocket/enemy-rocket.cpp.i
+.PHONY : src/rocket/enemy-rocket.i
+
+# target to preprocess a source file
+src/rocket/enemy-rocket.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/rocket/enemy-rocket.cpp.i
+.PHONY : src/rocket/enemy-rocket.cpp.i
+
+src/rocket/enemy-rocket.s: src/rocket/enemy-rocket.cpp.s
+.PHONY : src/rocket/enemy-rocket.s
+
+# target to generate assembly for a file
+src/rocket/enemy-rocket.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/src/rocket/enemy-rocket.cpp.s
+.PHONY : src/rocket/enemy-rocket.cpp.s
+
 src/rocket/rocket.o: src/rocket/rocket.cpp.o
 .PHONY : src/rocket/rocket.o
 
@@ -285,6 +333,9 @@ help:
 	@echo "... src/entity/Entity.o"
 	@echo "... src/entity/Entity.i"
 	@echo "... src/entity/Entity.s"
+	@echo "... src/functions/functions.o"
+	@echo "... src/functions/functions.i"
+	@echo "... src/functions/functions.s"
 	@echo "... src/gui-element/GuiElement.o"
 	@echo "... src/gui-element/GuiElement.i"
 	@echo "... src/gui-element/GuiElement.s"
@@ -294,6 +345,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/rocket/enemy-rocket.o"
+	@echo "... src/rocket/enemy-rocket.i"
+	@echo "... src/rocket/enemy-rocket.s"
 	@echo "... src/rocket/rocket.o"
 	@echo "... src/rocket/rocket.i"
 	@echo "... src/rocket/rocket.s"

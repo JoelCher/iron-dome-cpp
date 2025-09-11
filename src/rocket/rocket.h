@@ -7,14 +7,10 @@ class Rocket : public Entity {
     Vector3 pos;
     Vector3 velocity;
     int length;
+    int destroyedPercentage;
+    bool hasFallen();
 };
 
-class EnemyRocket : public Rocket {
-  public:
-    bool isDestroyed;
-    EnemyRocket();
-    void update_position();
-};
 class DefenderRocket : public Rocket {
   public:
     int ironDomeId;

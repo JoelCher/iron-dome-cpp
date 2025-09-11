@@ -1,4 +1,5 @@
 #include "../include/raylib.h"
+#include "../include/raymath.h"
 
 #define VECTOR_ADDITION_PROGRAM 1
 #define IRON_DOME_PROGRAM 2
