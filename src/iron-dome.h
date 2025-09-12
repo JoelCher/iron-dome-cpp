@@ -19,53 +19,60 @@
 #define WORLD_LENGTH 700.0f
 
 typedef struct {
-    Vector3 pos;
-    int remaining_rockets;
+  Vector3 pos;
+  int remaining_rockets;
 } Capsule;
 
 typedef struct {
-    Vector3 pos;
-    Vector3 size;
-    Color color;
-    bool is_placed;
+  Vector3 pos;
+  Vector3 size;
+  Color color;
+  bool is_placed;
 } Building;
 
+typedef struct {
+  Vector3 pos;
+  Vector3 velocity;
+} FallingPart;
+
 class IronDomeProgram {
-  public:
-    // Every rocket launch has a cost..
-    float moneyWasted = 0;
-    Camera camera;
-    std::vector<DefenderRocket> defenderRockets;
-    std::vector<EnemyRocket> enemyRockets;
-    std::vector<GuiElement> guiElements;
+public:
+  // Every rocket launch has a cost..
+  float moneyWasted = 0;
+  Camera camera;
+  std::vector<DefenderRocket> defenderRockets;
+  std::vector<EnemyRocket> enemyRockets;
+  std::vector<GuiElement> guiElements;
+  std::vector<FallingPart> fallingParts;
 
-    std::vector<Capsule> ironDomes = {
-        {{40, 0, -200}, 50}, {{40, 0, 200}, 50}, {{40, 0, 0}, 50}};
+  std::vector<Capsule> ironDomes = {
+      {{40, 0, -200}, 50}, {{40, 0, 200}, 50}, {{40, 0, 0}, 50}};
 
-    Building newBuilding = {{-100, 50.0 / 2, 30}, {3, 50, 5}, WHITE};
-    bool isAddingBuilding = false;
-    std::vector<Building> buildings;
+  Building newBuilding = {{-100, 50.0 / 2, 30}, {3, 50, 5}, WHITE};
+  bool isAddingBuilding = false;
+  std::vector<Building> buildings;
 
-    bool isSurrounding = false;
-    struct {
-        Vector3 start;
-        Vector3 end;
-    } mouse_surround_pos;
-    // Entities selected by the mouse surround or by single click
-    std::vector<Tank *> selectedEntities;
-    std::vector<Tank> tanks;
-    Vector3 selectedEntitiesTarget;
-    bool has_selected_target_position = false;
+  bool isSurrounding = false;
+  struct {
+    Vector3 start;
+    Vector3 end;
+  } mouse_surround_pos;
+  // Entities selected by the mouse surround or by single click
+  std::vector<Tank *> selectedEntities;
+  std::vector<Tank> tanks;
+  Vector3 selectedEntitiesTarget;
+  bool has_selected_target_position = false;
 
-    int init();
-    void check_rockets_collision();
-    void update_positions();
-    void reset_world();
-    void add_building();
-    void handle_mouse(Camera *camera);
-    void handle_camera(Camera *camera);
-    void add_enemy_rocket();
-    void loop();
-    void draw();
-    void escapeDefenderRockets();
+  int init();
+  void check_rockets_collision();
+  void update_positions();
+  void reset_world();
+  void add_building();
+  void handle_mouse(Camera *camera);
+  void handle_camera(Camera *camera);
+  void add_enemy_rocket();
+  void loop();
+  void draw();
+  void escapeDefenderRockets();
+  void updateFallingParts();
 };

@@ -17,4 +17,5 @@ I plan to implement a system where every destroyed object gets slowly disiimilat
 Allow the rockets to run away from the defender rockets by predicting their movemnet functions and figuring out their tragectory. To avoid too many calculations, do this only when a rocket is close enough to you.
 
 
-In the end, I guess a clone of command and conquer would be fucking great, almost like a dream.
+
+Currently, I am working on a system where when a rocket is hit, it diassambles into smaller particals, that then fall on the ground.

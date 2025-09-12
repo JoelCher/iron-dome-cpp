@@ -3,4 +3,5 @@
 build/Game
 build/cmake_install.cmake_installCmakeCache.txt
 build/CMakeFiles
+build/CMakeCache.txt
 
